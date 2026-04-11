@@ -555,13 +555,23 @@ window.__heeNotesPromise = new Promise(function(resolve){
       var f = $('canvas-frame');
       if (!f) return;
 
-      // iframe 내부 페이지 전환(load) 시 이전 페이지의 큰 높이를 물려받지 않도록 기본값으로 리셋
-      f.addEventListener('load', function(){
-        try { f.style.height = '400px'; } catch(_){}
-      });
-
       // 피드백 루프 방지: 현재 높이와의 차이가 작으면 무시한다
       var lastApplied = 0;
+
+      // iframe 내부 페이지 전환(load) 시:
+      //  1) 이전 페이지의 큰 높이를 물려받지 않도록 400px 로 리셋
+      //  2) lastApplied 도 0 으로 리셋 — 그렇지 않으면 신규 페이지가
+      //     우연히 이전 페이지와 비슷한 높이를 올려도 `|h - lastApplied| < 4`
+      //     가드에 걸려 무시되고, f.style.height 가 400px 에 그대로 머물러
+      //     iframe 내부 스크롤 + 부모 스크롤이 동시에 생기는 이중 스크롤이
+      //     발생한다. (업로드 → index.php 복귀 시 자주 재현됨)
+      f.addEventListener('load', function(){
+        try {
+          f.style.height = '400px';
+          lastApplied = 0;
+        } catch(_){}
+      });
+
       window.addEventListener('message', function(ev){
         if (ev.origin !== 'https://heeth.dothome.co.kr') return;
         if (!ev.data) return;
