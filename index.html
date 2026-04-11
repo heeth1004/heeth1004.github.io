@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Hee</title>
+<style>
+  html, body {
+    background: #ffffff;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  body {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 1.2em 1.2em 3em 1.2em;
+  }
+  h1 {
+    font-size: 2.2em;
+    margin: 0 0 0.1em 0;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 1.3em;
+    margin: 1.2em 0 0.4em 0;
+  }
+  p { margin: 0.4em 0; }
+
+  a, a:link, a:visited {
+    color: #000;
+    text-decoration: none;
+  }
+  a:hover, a:active {
+    color: #0000ee;
+    text-decoration: none;
+  }
+
+  .inline-nav {
+    margin: 0.8em 0 0.6em 0;
+  }
+
+  ul {
+    margin: 0.4em 0 0.6em 0;
+    padding-left: 1.6em;
+  }
+  li { margin: 0.2em 0; }
+
+  hr {
+    border: none;
+    border-top: 1px solid #666;
+    margin: 1.4em 0;
+  }
+
+  /* 클릭 시 나타나는 섹션 — 기본 숨김, :target 일 때만 표시 */
+  .panel {
+    display: none;
+  }
+  .panel:target {
+    display: block;
+  }
+
+  #notes-reader {
+    margin-top: 1.2em;
+    padding-top: 0.8em;
+    border-top: 1px dashed #ccc;
+    display: none;
+  }
+  #notes-reader.active { display: block; }
+  #notes-reader .entry-title {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin: 0.3em 0 0.2em 0;
+  }
+  #notes-reader .entry-date {
+    color: #666;
+    margin-bottom: 0.6em;
+  }
+  #notes-reader .entry-body img {
+    width: 500px;
+    height: 500px;
+    max-width: 100%;
+    object-fit: cover;
+    border: 2px solid #000;
+    margin: 0.5em 0;
+    display: block;
+    background: #fff;
+  }
+  #notes-reader .entry-body iframe {
+    max-width: 100%;
+    margin: 0.5em 0;
+    display: block;
+    border: 2px solid #000;
+  }
+  #notes-reader .entry-body p { margin: 0.5em 0; }
+  #notes-reader button {
+    background: #f4f4f4;
+    border: 1px solid #888;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 0.95em;
+    color: #000;
+  }
+  #notes-reader button:hover { background: #e6e6e6; }
+
+  .new-badge {
+    display: inline-block;
+    background: #fff8c4;
+    color: #666;
+    font-size: 0.55em;
+    font-weight: bold;
+    padding: 0 4px;
+    margin-left: 0.35em;
+    border: 1px solid #ede7a8;
+    vertical-align: middle;
+    font-family: "Times New Roman", Times, serif;
+    letter-spacing: 0.05em;
+  }
+
+  .gallery img {
+    border: 2px solid #000;
+    margin: 4px 6px 4px 0;
+    max-width: 200px;
+    height: auto;
+    background: #fff;
+  }
+  .placeholder {
+    display: inline-block;
+    width: 180px;
+    height: 120px;
+    border: 2px dashed #888;
+    background: #f0f0f0;
+    color: #555;
+    text-align: center;
+    line-height: 120px;
+    margin: 4px 6px 4px 0;
+    font-size: 0.85em;
+  }
+</style>
+</head>
+<body>
+
+<h1><a href="#" style="color:inherit;text-decoration:none;">Hee</a></h1>
+<p>인형을 만들고, 그림을 그리고, 재미난 이야기를 좋아합니다.</p>
+<p><a href="mailto:nhs84kr@naver.com">nhs84kr@naver.com</a></p>
+
+<p class="inline-nav">
+[ <a href="#notes">Notes</a> |
+<a href="#gallery">Gallery</a> ]
+</p>
+
+<!-- ==================== Notes (read-only) ==================== -->
+<div id="notes" class="panel">
+  <hr>
+  <h2>Notes</h2>
+  <div id="notes-list"></div>
+  <div id="notes-reader"></div>
+</div>
+
+<!-- ==================== Gallery ==================== -->
+<div id="gallery" class="panel">
+  <hr>
+  <h2>Gallery</h2>
+  <p><b>그림</b></p>
+  <p class="gallery">
+    <img src="images/drawing-01.jpg" alt="그림 1" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
+    <img src="images/drawing-02.jpg" alt="그림 2" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
+    <img src="images/drawing-03.jpg" alt="그림 3" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
+  </p>
+  <p><b>인형</b></p>
+  <p class="gallery">
+    <img src="images/doll-01.jpg" alt="인형 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
+    <img src="images/doll-02.jpg" alt="인형 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
+    <img src="images/doll-03.jpg" alt="인형 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
+  </p>
+</div>
+
+<script src="notes.js" onerror="this.remove();"></script>
+<script>
+(function(){
+  var STORAGE_KEY = 'hee-diary-entries';
+
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function loadEntries(){
+    // 1) localStorage에 일기가 있으면 그게 진짜 최신 (로컬 편집 환경)
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length > 0) return arr;
+      }
+    } catch(e) {}
+    // 2) 그게 없으면 notes.js가 심어둔 데이터 (호스팅 환경)
+    if (window.HEE_NOTES && Array.isArray(window.HEE_NOTES)) {
+      return window.HEE_NOTES;
+    }
+    return [];
+  }
+
+  function renderNotesList(){
+    var entries = loadEntries().slice();
+    entries.sort(function(a, b){
+      var da = a.date || '', db = b.date || '';
+      if (da !== db) return db.localeCompare(da);
+      return (b.updatedAt || '').localeCompare(a.updatedAt || '');
+    });
+    var listEl = $('notes-list');
+    if (entries.length === 0) {
+      listEl.innerHTML = '<p><i>아직 일기가 없습니다.</i></p>';
+      return;
+    }
+    var html = '<ul>';
+    entries.forEach(function(e, i){
+      var label = (e.date ? '[' + esc(e.date) + '] ' : '') + esc(e.title || '제목 없음');
+      var badge = (i < 2) ? ' <span class="new-badge">NEW</span>' : '';
+      html += '<li><a href="#notes" data-read="' + e.id + '">' + label + '</a>' + badge + '</li>';
+    });
+    html += '</ul>';
+    listEl.innerHTML = html;
+  }
+
+  function showList(){
+    $('notes-list').style.display = '';
+    var reader = $('notes-reader');
+    reader.classList.remove('active');
+    reader.innerHTML = '';
+  }
+
+  function renderReader(id){
+    var reader = $('notes-reader');
+    if (!id) { showList(); return; }
+    var entries = loadEntries();
+    var entry = null;
+    for (var i=0; i<entries.length; i++) if (entries[i].id === id) { entry = entries[i]; break; }
+    if (!entry) { showList(); return; }
+    var html = '';
+    html += '<div class="entry-title">' + esc(entry.title || '제목 없음') + '</div>';
+    html += '<div class="entry-date">' + esc(entry.date || '') + '</div>';
+    html += '<div class="entry-body">' + (entry.body || '') + '</div>';
+    html += '<p style="margin:1.5em 0 0 0;"><a href="#notes" id="btn-reader-back">← 목록으로</a></p>';
+    reader.innerHTML = html;
+    reader.classList.add('active');
+    $('notes-list').style.display = 'none';
+    $('btn-reader-back').addEventListener('click', function(e){
+      e.preventDefault();
+      renderReader(null);
+    });
+  }
+
+  function init(){
+    renderNotesList();
+    $('notes-list').addEventListener('click', function(e){
+      var t = e.target;
+      while (t && t !== this && !(t.dataset && t.dataset.read)) t = t.parentNode;
+      if (!t || t === this) return;
+      if (t.dataset && t.dataset.read) {
+        e.preventDefault();
+        renderReader(t.dataset.read);
+        location.hash = '#notes';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+</body>
+</html>
