@@ -95,13 +95,26 @@ window.__heeNotesPromise = new Promise(function(resolve){
     border-top: 1px solid #666;
     margin: 1.4em 0;
   }
+  hr.nav-rule {
+    width: 636px;  /* JS가 로드 후 실제 갤러리 폭으로 덮어씀 */
+    max-width: 100%;
+    margin: 0.6em 0;
+    margin-left: 0;
+  }
 
   /* 클릭 시 나타나는 섹션 — 기본 숨김, JS가 표시를 제어 */
   .panel {
     display: none;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
   .panel.open {
     display: block;
+  }
+  .panel img,
+  .panel iframe {
+    max-width: 100%;
   }
 
   #notes-reader {
@@ -162,24 +175,35 @@ window.__heeNotesPromise = new Promise(function(resolve){
     letter-spacing: 0.05em;
   }
 
-  .gallery img {
-    border: 2px solid #000;
-    margin: 4px 6px 4px 0;
-    max-width: 200px;
-    height: auto;
-    background: #fff;
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 720px;
+    margin: 0.4em 0 0.8em 0;
   }
-  .placeholder {
-    display: inline-block;
-    width: 180px;
-    height: 120px;
+  .gallery img {
+    width: 100%;
+    height: auto;
+    border: 2px solid #000;
+    background: #fff;
+    margin: 0;
+    box-sizing: border-box;
+    display: block;
+  }
+  .gallery .placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
     border: 2px dashed #888;
     background: #f0f0f0;
     color: #555;
     text-align: center;
-    line-height: 120px;
-    margin: 4px 6px 4px 0;
     font-size: 0.85em;
+    margin: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* ==================== 모바일 대응 ==================== */
@@ -216,16 +240,10 @@ window.__heeNotesPromise = new Promise(function(resolve){
       height: auto;
       aspect-ratio: 16 / 9;
     }
-    .gallery img {
-      max-width: 46%;
-      margin: 4px 2% 4px 0;
-    }
-    .placeholder {
-      width: 46%;
-      height: 100px;
-      line-height: 100px;
-      margin: 4px 2% 4px 0;
-      box-sizing: border-box;
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-width: 100%;
     }
   }
 </style>
@@ -239,16 +257,18 @@ window.__heeNotesPromise = new Promise(function(resolve){
 <p>인형을 만들고, 그림을 그리고, 재미난 이야기를 좋아합니다.</p>
 <p class="inline-nav">
 [ <a href="#notes">Notes</a> |
-<a href="#gallery">Gallery</a> ]
+<a href="#gallery">Gallery</a> |
+<a href="#friends">Friends</a> ]
 <span class="icon-links">
   <a id="email-link" href="#" data-u="nhs84kr" data-d="naver.com" title="이메일" aria-label="이메일 보내기"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8.4l7.47 4.67a1 1 0 0 0 1.06 0L20 8.4V18z"/></svg></a>
   <a href="https://x.com/heeth_n" target="_blank" rel="noopener noreferrer" title="Twitter" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
 </span>
 </p>
 
+<hr class="nav-rule">
+
 <!-- ==================== Notes (read-only) ==================== -->
 <div id="notes" class="panel">
-  <hr>
   <h2>Notes</h2>
   <div id="notes-list"></div>
   <div id="notes-reader"></div>
@@ -256,7 +276,6 @@ window.__heeNotesPromise = new Promise(function(resolve){
 
 <!-- ==================== Gallery ==================== -->
 <div id="gallery" class="panel">
-  <hr>
   <h2>Gallery</h2>
   <p><b>그림</b></p>
   <p class="gallery">
@@ -270,6 +289,14 @@ window.__heeNotesPromise = new Promise(function(resolve){
     <img src="images/doll-02.jpg" alt="인형 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
     <img src="images/doll-03.jpg" alt="인형 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
   </p>
+</div>
+
+<!-- ==================== Friends ==================== -->
+<div id="friends" class="panel">
+  <h2>Friends</h2>
+  <ul>
+    <li><a href="https://nachiketa3299.github.io/RUB/" target="_blank" rel="noopener noreferrer">RZN</a> — 남자친구.</li>
+  </ul>
 </div>
 
 <script>
@@ -349,6 +376,53 @@ window.__heeNotesPromise = new Promise(function(resolve){
     window.scrollTo(0, 0);
   }
 
+  function alignNavRule(){
+    var rule = document.querySelector('hr.nav-rule');
+    var panel = document.getElementById('gallery');
+    if (!rule || !panel) return;
+
+    var wasOpen = panel.classList.contains('open');
+    var prevPos    = panel.style.position;
+    var prevLeft   = panel.style.left;
+    var prevTop    = panel.style.top;
+    var prevVis    = panel.style.visibility;
+
+    if (!wasOpen) {
+      // 화면에 안 보이게 offscreen으로 빼서 레이아웃만 측정
+      panel.style.position = 'absolute';
+      panel.style.left = '-99999px';
+      panel.style.top = '0';
+      panel.style.visibility = 'hidden';
+      panel.classList.add('open');
+    }
+
+    var items = panel.querySelectorAll('.gallery img, .gallery .placeholder');
+    var panelRect = panel.getBoundingClientRect();
+    var maxRight = 0;
+    items.forEach(function(el){
+      var r = el.getBoundingClientRect();
+      var right = r.right - panelRect.left;
+      if (right > maxRight) maxRight = right;
+    });
+
+    if (!wasOpen) {
+      panel.classList.remove('open');
+      panel.style.position = prevPos;
+      panel.style.left = prevLeft;
+      panel.style.top = prevTop;
+      panel.style.visibility = prevVis;
+    }
+
+    if (maxRight > 0) {
+      var w = Math.round(maxRight) + 'px';
+      rule.style.width = w;
+      // 모든 패널(Notes / Gallery / Friends)도 가로바 폭을 넘지 않도록 제한
+      document.querySelectorAll('.panel').forEach(function(p){
+        p.style.maxWidth = w;
+      });
+    }
+  }
+
   function showPanel(name){
     // name: 'notes' | 'gallery' | null (둘 다 닫기)
     var panels = document.querySelectorAll('.panel');
@@ -375,6 +449,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
   function init(){
     setupEmailLink();
     renderNotesList();
+    alignNavRule();
+    window.addEventListener('load', alignNavRule);
+    window.addEventListener('resize', alignNavRule);
 
     $('notes-list').addEventListener('click', function(e){
       var t = e.target;
@@ -398,6 +475,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
         } else if (href === '#gallery') {
           e.preventDefault();
           showPanel('gallery');
+        } else if (href === '#friends') {
+          e.preventDefault();
+          showPanel('friends');
         }
         // 그 외(mailto:, https://x.com/…)는 기본 동작 그대로
       });
