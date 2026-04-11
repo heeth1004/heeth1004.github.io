@@ -328,18 +328,18 @@ window.__heeNotesPromise = new Promise(function(resolve){
   <h2>Gallery</h2>
   <ul class="gallery-label"><li>Dolls</li></ul>
   <div class="gallery">
-    <img src="images/doll-01.jpg" alt="Doll 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
-    <img src="images/doll-02.jpg" alt="Doll 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
-    <img src="images/doll-03.jpg" alt="Doll 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
-    <img src="images/doll-04.jpg" alt="Doll 4" onerror="this.outerHTML='<span class=\'placeholder\'>doll-04.jpg</span>'">
-    <img src="images/doll-05.jpg" alt="Doll 5" onerror="this.outerHTML='<span class=\'placeholder\'>doll-05.jpg</span>'">
-    <img src="images/doll-06.jpg" alt="Doll 6" onerror="this.outerHTML='<span class=\'placeholder\'>doll-06.jpg</span>'">
+    <img src="images/doll-01.jpg" alt="Doll 1" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
+    <img src="images/doll-02.jpg" alt="Doll 2" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
+    <img src="images/doll-03.jpg" alt="Doll 3" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
+    <img src="images/doll-04.jpg" alt="Doll 4" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-04.jpg</span>'">
+    <img src="images/doll-05.jpg" alt="Doll 5" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-05.jpg</span>'">
+    <img src="images/doll-06.jpg" alt="Doll 6" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>doll-06.jpg</span>'">
   </div>
   <ul class="gallery-label"><li>Drawings</li></ul>
   <div class="gallery">
-    <img src="images/drawing-01.jpg" alt="Drawing 1" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
-    <img src="images/drawing-02.jpg" alt="Drawing 2" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
-    <img src="images/drawing-03.jpg" alt="Drawing 3" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
+    <img src="images/drawing-01.jpg" alt="Drawing 1" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
+    <img src="images/drawing-02.jpg" alt="Drawing 2" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
+    <img src="images/drawing-03.jpg" alt="Drawing 3" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
   </div>
 </div>
 
@@ -490,8 +490,16 @@ window.__heeNotesPromise = new Promise(function(resolve){
             /* 허용되지 않은 태그 — 자식은 살리되 자기 자신은 제거 */
             while (child.firstChild) node.insertBefore(child.firstChild, child);
             node.removeChild(child);
-            /* 자식들을 다시 검사해야 하므로 walk 재귀는 부모에서 계속 */
             continue;
+          }
+          /* IFRAME 은 src 화이트리스트(YouTube)에 한해서만 허용.
+             그 외엔 아예 통째로 제거한 뒤 다음 자식으로 넘어간다. */
+          if (tag === 'IFRAME') {
+            var iframeSrc = child.getAttribute('src') || '';
+            if (!urlSafe(iframeSrc) || !iframeSrcSafe(iframeSrc)) {
+              node.removeChild(child);
+              continue;
+            }
           }
           /* 속성 필터 */
           var attrs = Array.prototype.slice.call(child.attributes);
@@ -502,14 +510,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
             if (!attrAllowed(tag, name)) { child.removeAttribute(attrs[j].name); continue; }
             /* URL 계열 속성 보호 */
             if (name === 'href' || name === 'src') {
-              var val = attrs[j].value;
-              if (!urlSafe(val)) { child.removeAttribute(attrs[j].name); continue; }
-              if (tag === 'IFRAME' && name === 'src' && !iframeSrcSafe(val)) {
-                child.removeAttribute(attrs[j].name);
-                /* src 가 YouTube 가 아니면 iframe 자체도 무력화 */
-                child.parentNode && child.parentNode.removeChild(child);
-                continue;
-              }
+              if (!urlSafe(attrs[j].value)) { child.removeAttribute(attrs[j].name); continue; }
             }
           }
           walk(child);
