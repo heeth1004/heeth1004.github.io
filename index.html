@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Heeth</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <script>
@@ -319,6 +320,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
   <h2>Friends</h2>
   <ul>
     <li><a href="https://nachiketa3299.github.io/RUB/" target="_blank" rel="noopener noreferrer">RZN</a> — 남자친구</li>
+    <li><a href="https://luminari.uk" target="_blank" rel="noopener noreferrer">Dabin Yim</a> — 멋쟁이 해커</li>
   </ul>
 </div>
 
@@ -374,6 +376,13 @@ window.__heeNotesPromise = new Promise(function(resolve){
     reader.innerHTML = '';
   }
 
+  function fixYoutubeEmbeds(body){
+    // YouTube embed error 153 회피: 기존 youtube.com/embed → youtube-nocookie.com/embed
+    if (!body) return body;
+    return body.replace(/https?:\/\/(?:www\.)?youtube\.com\/embed\//g,
+                        'https://www.youtube-nocookie.com/embed/');
+  }
+
   function renderReader(id){
     var reader = $('notes-reader');
     if (!id) { showList(); return; }
@@ -384,7 +393,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
     var html = '';
     html += '<div class="entry-title">' + esc(entry.title || '제목 없음') + '</div>';
     html += '<div class="entry-date">' + esc(entry.date || '') + '</div>';
-    html += '<div class="entry-body">' + (entry.body || '') + '</div>';
+    html += '<div class="entry-body">' + fixYoutubeEmbeds(entry.body || '') + '</div>';
     html += '<p style="margin:1.5em 0 0 0;"><a href="#notes" id="btn-reader-back">← 목록으로</a></p>';
     reader.innerHTML = html;
     reader.classList.add('active');
