@@ -96,10 +96,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
     margin: 1.4em 0;
   }
   hr.nav-rule {
-    width: 636px;  /* JS가 로드 후 실제 갤러리 폭으로 덮어씀 */
+    width: 720px;  /* JS가 로드 후 실제 갤러리 폭으로 덮어씀 */
     max-width: 100%;
-    margin: 0.6em 0;
-    margin-left: 0;
+    margin: 0.6em 0 0.6em 0;
   }
 
   /* 클릭 시 나타나는 섹션 — 기본 숨김, JS가 표시를 제어 */
@@ -107,7 +106,6 @@ window.__heeNotesPromise = new Promise(function(resolve){
     display: none;
     box-sizing: border-box;
     overflow-wrap: break-word;
-    word-wrap: break-word;
   }
   .panel.open {
     display: block;
@@ -150,16 +148,6 @@ window.__heeNotesPromise = new Promise(function(resolve){
     border: 2px solid #000;
   }
   #notes-reader .entry-body p { margin: 0.5em 0; }
-  #notes-reader button {
-    background: #f4f4f4;
-    border: 1px solid #888;
-    padding: 4px 12px;
-    cursor: pointer;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 0.95em;
-    color: #000;
-  }
-  #notes-reader button:hover { background: #e6e6e6; }
 
   .new-badge {
     display: inline-block;
@@ -250,7 +238,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
 </head>
 <body>
 
-<h1><a href="#" style="text-decoration:none;">Heeth</a></h1>
+<h1><a href="#">Heeth</a></h1>
 <p class="profile-sketch">
   <img src="images/profile-sketch.svg" alt="" onerror="this.style.display='none';">
 </p>
@@ -278,24 +266,24 @@ window.__heeNotesPromise = new Promise(function(resolve){
 <div id="gallery" class="panel">
   <h2>Gallery</h2>
   <p><b>그림</b></p>
-  <p class="gallery">
+  <div class="gallery">
     <img src="images/drawing-01.jpg" alt="그림 1" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
     <img src="images/drawing-02.jpg" alt="그림 2" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
     <img src="images/drawing-03.jpg" alt="그림 3" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
-  </p>
+  </div>
   <p><b>인형</b></p>
-  <p class="gallery">
+  <div class="gallery">
     <img src="images/doll-01.jpg" alt="인형 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
     <img src="images/doll-02.jpg" alt="인형 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
     <img src="images/doll-03.jpg" alt="인형 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
-  </p>
+  </div>
 </div>
 
 <!-- ==================== Friends ==================== -->
 <div id="friends" class="panel">
   <h2>Friends</h2>
   <ul>
-    <li><a href="https://nachiketa3299.github.io/RUB/" target="_blank" rel="noopener noreferrer">RZN</a> — 남자친구.</li>
+    <li><a href="https://nachiketa3299.github.io/RUB/" target="_blank" rel="noopener noreferrer">RZN</a> — 남자친구</li>
   </ul>
 </div>
 
@@ -424,9 +412,8 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
 
   function showPanel(name){
-    // name: 'notes' | 'gallery' | null (둘 다 닫기)
-    var panels = document.querySelectorAll('.panel');
-    panels.forEach(function(p){
+    // name: 'notes' | 'gallery' | 'friends' | null (모두 닫기)
+    document.querySelectorAll('.panel').forEach(function(p){
       if (p.id === name) p.classList.add('open');
       else p.classList.remove('open');
     });
@@ -464,7 +451,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
       }
     });
 
-    // Notes / Gallery 링크 — JS로 패널 전환 (해시 변경 없음)
+    // Notes / Gallery / Friends 링크 — JS로 패널 전환 (해시 변경 없음)
     // 주의: .inline-nav 안에 이메일/트위터 아이콘 링크도 있으므로 href 확인 후에만 가로챈다
     document.querySelectorAll('.inline-nav a').forEach(function(a){
       a.addEventListener('click', function(e){
@@ -483,13 +470,14 @@ window.__heeNotesPromise = new Promise(function(resolve){
       });
     });
 
-    // Hee (홈) 링크 — 모든 패널 닫고 맨 위로
-    document.querySelectorAll('h1 a').forEach(function(a){
-      a.addEventListener('click', function(e){
+    // Heeth (홈) 링크 — 모든 패널 닫고 맨 위로
+    var home = document.querySelector('h1 a');
+    if (home) {
+      home.addEventListener('click', function(e){
         e.preventDefault();
         showPanel(null);
       });
-    });
+    }
   }
 
   function start(){
