@@ -312,6 +312,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
     <img src="images/doll-01.jpg" alt="인형 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
     <img src="images/doll-02.jpg" alt="인형 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
     <img src="images/doll-03.jpg" alt="인형 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
+    <img src="images/doll-04.jpg" alt="인형 4" onerror="this.outerHTML='<span class=\'placeholder\'>doll-04.jpg</span>'">
+    <img src="images/doll-05.jpg" alt="인형 5" onerror="this.outerHTML='<span class=\'placeholder\'>doll-05.jpg</span>'">
+    <img src="images/doll-06.jpg" alt="인형 6" onerror="this.outerHTML='<span class=\'placeholder\'>doll-06.jpg</span>'">
   </div>
 </div>
 
@@ -377,10 +380,19 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
 
   function fixYoutubeEmbeds(body){
-    // YouTube embed error 153 회피: 기존 youtube.com/embed → youtube-nocookie.com/embed
+    // YouTube embed error 153 회피:
+    //  1) 기존 youtube.com/embed → youtube-nocookie.com/embed
+    //  2) youtube-nocookie 포함한 모든 YT iframe에 referrerpolicy 속성 주입 (없을 때만)
     if (!body) return body;
-    return body.replace(/https?:\/\/(?:www\.)?youtube\.com\/embed\//g,
-                        'https://www.youtube-nocookie.com/embed/');
+    var out = body.replace(/https?:\/\/(?:www\.)?youtube\.com\/embed\//g,
+                           'https://www.youtube-nocookie.com/embed/');
+    out = out.replace(/<iframe\b([^>]*?)\bsrc="(https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[^"]*)"([^>]*)>/gi,
+      function(match, pre, src, post){
+        var attrs = pre + post;
+        if (/\breferrerpolicy\s*=/i.test(attrs)) return match; // 이미 있음
+        return '<iframe' + pre + 'src="' + src + '" referrerpolicy="strict-origin-when-cross-origin"' + post + '>';
+      });
+    return out;
   }
 
   function renderReader(id){
