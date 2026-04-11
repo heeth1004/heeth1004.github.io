@@ -404,20 +404,11 @@ window.__heeNotesPromise = new Promise(function(resolve){
     var panel = document.getElementById('gallery');
     if (!rule || !panel) return;
 
+    // 측정 시 패널을 잠깐 .open 으로 켠다. JS가 동기 실행되므로 add → 측정 → remove
+    // 사이에는 브라우저가 paint하지 않아 깜빡임 없음. position 조작은 하지 않음
+    // (position:absolute 로 빼면 grid 컨테이너가 shrink-to-fit 되어 측정값이 망가짐).
     var wasOpen = panel.classList.contains('open');
-    var prevPos    = panel.style.position;
-    var prevLeft   = panel.style.left;
-    var prevTop    = panel.style.top;
-    var prevVis    = panel.style.visibility;
-
-    if (!wasOpen) {
-      // 화면에 안 보이게 offscreen으로 빼서 레이아웃만 측정
-      panel.style.position = 'absolute';
-      panel.style.left = '-99999px';
-      panel.style.top = '0';
-      panel.style.visibility = 'hidden';
-      panel.classList.add('open');
-    }
+    if (!wasOpen) panel.classList.add('open');
 
     var items = panel.querySelectorAll('.gallery img, .gallery .placeholder');
     var panelRect = panel.getBoundingClientRect();
@@ -428,22 +419,17 @@ window.__heeNotesPromise = new Promise(function(resolve){
       if (right > maxRight) maxRight = right;
     });
 
-    if (!wasOpen) {
-      panel.classList.remove('open');
-      panel.style.position = prevPos;
-      panel.style.left = prevLeft;
-      panel.style.top = prevTop;
-      panel.style.visibility = prevVis;
-    }
+    if (!wasOpen) panel.classList.remove('open');
 
-    if (maxRight > 0) {
-      var w = Math.round(maxRight) + 'px';
-      rule.style.width = w;
-      // 모든 패널(Notes / Gallery / Friends)도 가로바 폭을 넘지 않도록 제한
-      document.querySelectorAll('.panel').forEach(function(p){
-        p.style.maxWidth = w;
-      });
-    }
+    // 안전장치: 비정상적으로 작은 값이면 무시 (이미지 로드 전이거나 측정 실패)
+    if (maxRight < 120) return;
+
+    var w = Math.round(maxRight) + 'px';
+    rule.style.width = w;
+    // 모든 패널(Notes / Gallery / Friends)도 가로바 폭을 넘지 않도록 제한
+    document.querySelectorAll('.panel').forEach(function(p){
+      p.style.maxWidth = w;
+    });
   }
 
   function showPanel(name){
