@@ -189,6 +189,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
     border: none;
     background: #fff;
     display: block;
+    /* 이중 스크롤 방지: iframe 내부 스크롤바를 CSS 레벨에서도 강제 차단.
+       scrolling="no" 과 중복이지만 일부 브라우저 보정용. */
+    overflow: hidden;
   }
   .gallery {
     display: grid;
@@ -343,6 +346,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
           data-src="https://heeth.dothome.co.kr/52/"
           title="Canvas"
           loading="lazy"
+          scrolling="no"
           referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 
@@ -555,14 +559,11 @@ window.__heeNotesPromise = new Promise(function(resolve){
       var f = $('canvas-frame');
       if (!f) return;
 
-      // iframe 내부 페이지 전환(load) 시 이전 페이지의 큰 높이를 물려받지
-      // 않도록 400px 로 리셋. 단, bfcache 복귀 경로에서는 브라우저·상황에
-      // 따라 이 load 이벤트가 발화하지 않을 수 있으므로 이 리셋만으로는
-      // 부족하다. 아래 message 핸들러가 '실제 적용된 style.height' 를 직접
-      // 비교하도록 해서 스테일 상태 의존성을 아예 없앤다.
-      f.addEventListener('load', function(){
-        try { f.style.height = '400px'; } catch(_){}
-      });
+      // NOTE: 과거에는 여기서 iframe load 시 400px 로 리셋했지만,
+      // 그 리셋이 "자식이 새 높이를 post 한 직후" 에 실행되는 레이스가 발생해
+      // 부모가 올바른 값을 덮어써 버리는 경우가 있었다 (취소→복귀 시 이중 스크롤).
+      // 아래 message 핸들러가 '실제 적용된 style.height' 와 직접 비교하므로
+      // 스테일한 이전 높이는 자동으로 교체된다 — 별도 리셋 불필요.
 
       window.addEventListener('message', function(ev){
         if (ev.origin !== 'https://heeth.dothome.co.kr') return;
