@@ -60,11 +60,11 @@
     margin: 1.4em 0;
   }
 
-  /* 클릭 시 나타나는 섹션 — 기본 숨김, :target 일 때만 표시 */
+  /* 클릭 시 나타나는 섹션 — 기본 숨김, JS가 표시를 제어 */
   .panel {
     display: none;
   }
-  .panel:target {
+  .panel.open {
     display: block;
   }
 
@@ -306,11 +306,24 @@
   }
 
   function scrollTop(){
-    setTimeout(function(){ window.scrollTo(0, 0); }, 0);
+    window.scrollTo(0, 0);
+  }
+
+  function showPanel(name){
+    // name: 'notes' | 'gallery' | null (둘 다 닫기)
+    var panels = document.querySelectorAll('.panel');
+    panels.forEach(function(p){
+      if (p.id === name) p.classList.add('open');
+      else p.classList.remove('open');
+    });
+    // Notes 패널을 다시 열 때는 항상 목록 상태로 초기화
+    if (name === 'notes') showList();
+    scrollTop();
   }
 
   function init(){
     renderNotesList();
+
     $('notes-list').addEventListener('click', function(e){
       var t = e.target;
       while (t && t !== this && !(t.dataset && t.dataset.read)) t = t.parentNode;
@@ -318,16 +331,25 @@
       if (t.dataset && t.dataset.read) {
         e.preventDefault();
         renderReader(t.dataset.read);
-        location.hash = '#notes';
         scrollTop();
       }
     });
 
-    // Notes / Gallery / Hee 링크 클릭 시 항상 페이지 맨 위로 고정 + 리더 상태 초기화
-    document.querySelectorAll('.inline-nav a, h1 a').forEach(function(a){
-      a.addEventListener('click', function(){
-        showList();     // 리더가 열려 있었으면 닫고 목록 복원
-        scrollTop();
+    // Notes / Gallery 링크 — JS로 패널 전환 (해시 변경 없음)
+    document.querySelectorAll('.inline-nav a').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        var href = a.getAttribute('href') || '';
+        if (href === '#notes')        showPanel('notes');
+        else if (href === '#gallery') showPanel('gallery');
+      });
+    });
+
+    // Hee (홈) 링크 — 모든 패널 닫고 맨 위로
+    document.querySelectorAll('h1 a').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        showPanel(null);
       });
     });
   }
