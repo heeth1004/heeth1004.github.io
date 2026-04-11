@@ -180,10 +180,12 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
   ul.gallery-label li { margin: 0; }
 
-  /* Canvas (오에카키 게시판 임베드) */
+  /* Canvas (오에카키 게시판 임베드)
+     - 초기 높이는 작게 잡아 첫 렌더 시 레이아웃 점프를 줄이고,
+       로드 후 iframe 내부에서 postMessage로 실제 높이를 올려 덮어쓴다. */
   #canvas-frame {
     width: 100%;
-    height: 720px;
+    height: 400px;
     border: none;
     background: #fff;
     display: block;
@@ -555,17 +557,24 @@ window.__heeNotesPromise = new Promise(function(resolve){
 
       // iframe 내부 페이지 전환(load) 시 이전 페이지의 큰 높이를 물려받지 않도록 기본값으로 리셋
       f.addEventListener('load', function(){
-        try { f.style.height = '720px'; } catch(_){}
+        try { f.style.height = '400px'; } catch(_){}
       });
 
+      // 피드백 루프 방지: 현재 높이와의 차이가 작으면 무시한다
+      var lastApplied = 0;
       window.addEventListener('message', function(ev){
-        if (!ev.data || ev.data.type !== 'board52-height') return;
         if (ev.origin !== 'https://heeth.dothome.co.kr') return;
-        var h = parseInt(ev.data.height, 10);
-        if (isNaN(h) || h <= 0) return;
-        var target = (h + 20) + 'px';
-        if (f.style.height !== target) {
-          f.style.height = target;
+        if (!ev.data) return;
+        if (ev.data.type === 'board52-height') {
+          var h = parseInt(ev.data.height, 10);
+          if (isNaN(h) || h <= 0) return;
+          // 비상식적으로 큰 값은 방어적으로 거부 (루프 폭주 대비)
+          if (h > 20000) return;
+          // 여분 패딩은 더하지 않는다 — 자식 body 의 실제 높이만 그대로 반영
+          if (Math.abs(h - lastApplied) < 4) return;
+          lastApplied = h;
+          f.style.height = h + 'px';
+          return;
         }
       });
     })();
