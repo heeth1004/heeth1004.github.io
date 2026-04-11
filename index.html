@@ -179,6 +179,15 @@ window.__heeNotesPromise = new Promise(function(resolve){
     margin: 0.6em 0 0.2em 0;
   }
   ul.gallery-label li { margin: 0; }
+
+  /* Canvas (오에카키 게시판 임베드) */
+  #canvas-frame {
+    width: 100%;
+    height: 720px;
+    border: none;
+    background: #fff;
+    display: block;
+  }
   .gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -278,6 +287,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
 <p>인형을 만들고, 그림을 그리고, 좋은 음악과 재미난 이야기를 좋아합니다.</p>
 <p class="inline-nav">
 [ <a href="#notes">Notes</a> |
+<a href="#canvas">Canvas</a> |
 <a href="#gallery">Gallery</a> |
 <a href="#friends">Friends</a> ]
 <span class="icon-links">
@@ -322,6 +332,16 @@ window.__heeNotesPromise = new Promise(function(resolve){
     <li><a href="https://nachiketa3299.github.io/RUB/" target="_blank" rel="noopener noreferrer">RZN</a> — 남자친구</li>
     <li><a href="https://luminari.uk" target="_blank" rel="noopener noreferrer">Dabin Yim</a> — 멋쟁이 해커</li>
   </ul>
+</div>
+
+<!-- ==================== Canvas (oekaki board, embedded) ==================== -->
+<div id="canvas" class="panel">
+  <h2>Canvas</h2>
+  <iframe id="canvas-frame"
+          data-src="https://heeth.dothome.co.kr/52/"
+          title="Canvas"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 
 <script>
@@ -451,13 +471,20 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
 
   function showPanel(name){
-    // name: 'notes' | 'gallery' | 'friends' | null (모두 닫기)
+    // name: 'notes' | 'gallery' | 'friends' | 'canvas' | null (모두 닫기)
     document.querySelectorAll('.panel').forEach(function(p){
       if (p.id === name) p.classList.add('open');
       else p.classList.remove('open');
     });
     // Notes 패널을 다시 열 때는 항상 목록 상태로 초기화
     if (name === 'notes') showList();
+    // Canvas 패널은 처음 열릴 때만 iframe src 주입 (지연 로드)
+    if (name === 'canvas') {
+      var frame = $('canvas-frame');
+      if (frame && !frame.src && frame.dataset.src) {
+        frame.src = frame.dataset.src;
+      }
+    }
     scrollTop();
   }
 
@@ -504,6 +531,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
         } else if (href === '#friends') {
           e.preventDefault();
           showPanel('friends');
+        } else if (href === '#canvas') {
+          e.preventDefault();
+          showPanel('canvas');
         }
         // 그 외(mailto:, https://x.com/…)는 기본 동작 그대로
       });
