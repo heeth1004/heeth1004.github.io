@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Heeth</title>
 <link rel="icon" type="image/png" href="favicon.png">
+<script>
+// notes.js 캐시 버스터: 분 단위 버전 쿼리로 오래된 캐시 회피
+window.__heeNotesPromise = new Promise(function(resolve){
+  var bust = Math.floor(Date.now() / 60000);
+  var s = document.createElement('script');
+  s.src = 'notes.js?v=' + bust;
+  s.onload  = function(){ resolve(); };
+  s.onerror = function(){ this.remove(); resolve(); };
+  document.head.appendChild(s);
+});
+</script>
 <style>
   html {
     overflow-y: scroll;
@@ -198,7 +209,7 @@
 
 <h1><a href="#" style="text-decoration:none;">Heeth</a></h1>
 <p>인형을 만들고, 그림을 그리고, 재미난 이야기를 좋아합니다.</p>
-<p><a href="mailto:nhs84kr@naver.com">nhs84kr@naver.com</a></p>
+<p><a id="email-link" href="#" data-u="nhs84kr" data-d="naver.com">이메일 보기</a></p>
 
 <p class="inline-nav">
 [ <a href="#notes">Notes</a> |
@@ -231,7 +242,6 @@
   </p>
 </div>
 
-<script src="notes.js" onerror="this.remove();"></script>
 <script>
 (function(){
   var STORAGE_KEY = 'hee-diary-entries';
@@ -321,7 +331,21 @@
     scrollTop();
   }
 
+  function setupEmailLink(){
+    var el = $('email-link');
+    if (!el) return;
+    var u = el.getAttribute('data-u');
+    var d = el.getAttribute('data-d');
+    if (!u || !d) return;
+    var addr = u + '@' + d;
+    el.setAttribute('href', 'mailto:' + addr);
+    el.textContent = addr;
+    el.removeAttribute('data-u');
+    el.removeAttribute('data-d');
+  }
+
   function init(){
+    setupEmailLink();
     renderNotesList();
 
     $('notes-list').addEventListener('click', function(e){
@@ -354,10 +378,18 @@
     });
   }
 
+  function start(){
+    if (window.__heeNotesPromise && typeof window.__heeNotesPromise.then === 'function') {
+      window.__heeNotesPromise.then(init);
+    } else {
+      init();
+    }
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', start);
   } else {
-    init();
+    start();
   }
 })();
 </script>
