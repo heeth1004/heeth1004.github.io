@@ -2,9 +2,14 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hee</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
+  html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
   html, body {
     background: #ffffff;
     color: #000;
@@ -140,6 +145,53 @@
     margin: 4px 6px 4px 0;
     font-size: 0.85em;
   }
+
+  /* ==================== 모바일 대응 ==================== */
+  @media (max-width: 640px) {
+    html, body {
+      font-size: 17px;
+    }
+    body {
+      padding: 1em 1em 2.5em 1em;
+    }
+    h1 {
+      font-size: 1.9em;
+    }
+    h2 {
+      font-size: 1.2em;
+    }
+    .inline-nav {
+      margin: 1em 0 0.6em 0;
+    }
+    ul {
+      padding-left: 1.3em;
+    }
+    #notes-reader .entry-title {
+      font-size: 1.25em;
+    }
+    #notes-reader .entry-body img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    #notes-reader .entry-body iframe {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+    .gallery img {
+      max-width: 46%;
+      margin: 4px 2% 4px 0;
+    }
+    .placeholder {
+      width: 46%;
+      height: 100px;
+      line-height: 100px;
+      margin: 4px 2% 4px 0;
+      box-sizing: border-box;
+    }
+  }
 </style>
 </head>
 <body>
@@ -253,6 +305,10 @@
     });
   }
 
+  function scrollTop(){
+    setTimeout(function(){ window.scrollTo(0, 0); }, 0);
+  }
+
   function init(){
     renderNotesList();
     $('notes-list').addEventListener('click', function(e){
@@ -263,7 +319,16 @@
         e.preventDefault();
         renderReader(t.dataset.read);
         location.hash = '#notes';
+        scrollTop();
       }
+    });
+
+    // Notes / Gallery / Hee 링크 클릭 시 항상 페이지 맨 위로 고정 + 리더 상태 초기화
+    document.querySelectorAll('.inline-nav a, h1 a').forEach(function(a){
+      a.addEventListener('click', function(){
+        showList();     // 리더가 열려 있었으면 닫고 목록 복원
+        scrollTop();
+      });
     });
   }
 
