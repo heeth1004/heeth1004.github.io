@@ -62,17 +62,11 @@ window.__heeNotesPromise = new Promise(function(resolve){
     text-decoration: none;
     -webkit-tap-highlight-color: rgba(180, 204, 197, 0.25);
   }
-  /* 포인터가 실제로 hover를 지원하는 환경(데스크톱 마우스)에서만 hover 색 적용 */
+  /* 포인터가 실제로 hover를 지원하는 환경(데스크톱)에서만 hover 색 적용 */
   @media (hover: hover) {
-    a:hover {
-      color: #b4ccc5;
-      text-decoration: none;
-    }
+    a:hover { color: #b4ccc5; }
   }
-  a:active {
-    color: #b4ccc5;
-    text-decoration: none;
-  }
+  a:active { color: #b4ccc5; }
 
   .profile-sketch {
     margin: 0.4em 0 0.6em 0;
@@ -142,7 +136,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
   #notes-reader.active { display: block; }
   #notes-reader .entry-title {
-    font-size: 1.4em;
+    font-size: 1.2em;
     font-weight: bold;
     margin: 0.3em 0 0.2em 0;
   }
@@ -178,10 +172,13 @@ window.__heeNotesPromise = new Promise(function(resolve){
     margin-left: 0.35em;
     border: 1px solid #ede7a8;
     vertical-align: middle;
-    font-family: "Times New Roman", Times, serif;
     letter-spacing: 0.05em;
   }
 
+  ul.gallery-label {
+    margin: 0.6em 0 0.2em 0;
+  }
+  ul.gallery-label li { margin: 0; }
   .gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -244,7 +241,7 @@ window.__heeNotesPromise = new Promise(function(resolve){
       padding-left: 1.3em;
     }
     #notes-reader .entry-title {
-      font-size: 1.25em;
+      font-size: 1.1em;
     }
     #notes-reader .entry-body img {
       width: 100%;
@@ -301,20 +298,20 @@ window.__heeNotesPromise = new Promise(function(resolve){
 <!-- ==================== Gallery ==================== -->
 <div id="gallery" class="panel">
   <h2>Gallery</h2>
-  <p><b>그림</b></p>
+  <ul class="gallery-label"><li>Dolls</li></ul>
   <div class="gallery">
-    <img src="images/drawing-01.jpg" alt="그림 1" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
-    <img src="images/drawing-02.jpg" alt="그림 2" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
-    <img src="images/drawing-03.jpg" alt="그림 3" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
+    <img src="images/doll-01.jpg" alt="Doll 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
+    <img src="images/doll-02.jpg" alt="Doll 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
+    <img src="images/doll-03.jpg" alt="Doll 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
+    <img src="images/doll-04.jpg" alt="Doll 4" onerror="this.outerHTML='<span class=\'placeholder\'>doll-04.jpg</span>'">
+    <img src="images/doll-05.jpg" alt="Doll 5" onerror="this.outerHTML='<span class=\'placeholder\'>doll-05.jpg</span>'">
+    <img src="images/doll-06.jpg" alt="Doll 6" onerror="this.outerHTML='<span class=\'placeholder\'>doll-06.jpg</span>'">
   </div>
-  <p><b>인형</b></p>
+  <ul class="gallery-label"><li>Drawings</li></ul>
   <div class="gallery">
-    <img src="images/doll-01.jpg" alt="인형 1" onerror="this.outerHTML='<span class=\'placeholder\'>doll-01.jpg</span>'">
-    <img src="images/doll-02.jpg" alt="인형 2" onerror="this.outerHTML='<span class=\'placeholder\'>doll-02.jpg</span>'">
-    <img src="images/doll-03.jpg" alt="인형 3" onerror="this.outerHTML='<span class=\'placeholder\'>doll-03.jpg</span>'">
-    <img src="images/doll-04.jpg" alt="인형 4" onerror="this.outerHTML='<span class=\'placeholder\'>doll-04.jpg</span>'">
-    <img src="images/doll-05.jpg" alt="인형 5" onerror="this.outerHTML='<span class=\'placeholder\'>doll-05.jpg</span>'">
-    <img src="images/doll-06.jpg" alt="인형 6" onerror="this.outerHTML='<span class=\'placeholder\'>doll-06.jpg</span>'">
+    <img src="images/drawing-01.jpg" alt="Drawing 1" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-01.jpg</span>'">
+    <img src="images/drawing-02.jpg" alt="Drawing 2" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-02.jpg</span>'">
+    <img src="images/drawing-03.jpg" alt="Drawing 3" onerror="this.outerHTML='<span class=\'placeholder\'>drawing-03.jpg</span>'">
   </div>
 </div>
 
@@ -523,11 +520,9 @@ window.__heeNotesPromise = new Promise(function(resolve){
   }
 
   function start(){
-    if (window.__heeNotesPromise && typeof window.__heeNotesPromise.then === 'function') {
-      window.__heeNotesPromise.then(init);
-    } else {
-      init();
-    }
+    // __heeNotesPromise는 head의 인라인 스크립트가 항상 심어둔다
+    if (window.__heeNotesPromise) window.__heeNotesPromise.then(init);
+    else init();
   }
 
   if (document.readyState === 'loading') {
