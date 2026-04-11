@@ -555,21 +555,13 @@ window.__heeNotesPromise = new Promise(function(resolve){
       var f = $('canvas-frame');
       if (!f) return;
 
-      // 피드백 루프 방지: 현재 높이와의 차이가 작으면 무시한다
-      var lastApplied = 0;
-
-      // iframe 내부 페이지 전환(load) 시:
-      //  1) 이전 페이지의 큰 높이를 물려받지 않도록 400px 로 리셋
-      //  2) lastApplied 도 0 으로 리셋 — 그렇지 않으면 신규 페이지가
-      //     우연히 이전 페이지와 비슷한 높이를 올려도 `|h - lastApplied| < 4`
-      //     가드에 걸려 무시되고, f.style.height 가 400px 에 그대로 머물러
-      //     iframe 내부 스크롤 + 부모 스크롤이 동시에 생기는 이중 스크롤이
-      //     발생한다. (업로드 → index.php 복귀 시 자주 재현됨)
+      // iframe 내부 페이지 전환(load) 시 이전 페이지의 큰 높이를 물려받지
+      // 않도록 400px 로 리셋. 단, bfcache 복귀 경로에서는 브라우저·상황에
+      // 따라 이 load 이벤트가 발화하지 않을 수 있으므로 이 리셋만으로는
+      // 부족하다. 아래 message 핸들러가 '실제 적용된 style.height' 를 직접
+      // 비교하도록 해서 스테일 상태 의존성을 아예 없앤다.
       f.addEventListener('load', function(){
-        try {
-          f.style.height = '400px';
-          lastApplied = 0;
-        } catch(_){}
+        try { f.style.height = '400px'; } catch(_){}
       });
 
       window.addEventListener('message', function(ev){
@@ -580,9 +572,15 @@ window.__heeNotesPromise = new Promise(function(resolve){
           if (isNaN(h) || h <= 0) return;
           // 비상식적으로 큰 값은 방어적으로 거부 (루프 폭주 대비)
           if (h > 20000) return;
+          // 실제로 지금 iframe 에 세팅돼 있는 style.height 와 비교한다.
+          // lastApplied 같은 별도 스테일 변수를 두지 않음으로써,
+          //  - 업로드 → redirect 로 새 페이지가 로드된 경우
+          //  - 뒤로가기/bfcache 로 복귀한 경우 (load 이벤트가 발화하지
+          //    않아 리셋이 스킵될 수 있는 경로)
+          // 양쪽 모두 동일 코드 경로로 올바르게 반영된다.
+          var currentPx = parseInt(f.style.height, 10) || 0;
+          if (Math.abs(h - currentPx) < 4) return;
           // 여분 패딩은 더하지 않는다 — 자식 body 의 실제 높이만 그대로 반영
-          if (Math.abs(h - lastApplied) < 4) return;
-          lastApplied = h;
           f.style.height = h + 'px';
           return;
         }
