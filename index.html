@@ -20,6 +20,8 @@ window.__heeNotesPromise = new Promise(function(resolve){
   html {
     overflow-y: scroll;
     scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   html, body {
     background: #ffffff;
@@ -29,11 +31,19 @@ window.__heeNotesPromise = new Promise(function(resolve){
     font-family: "Times New Roman", Times, serif;
     font-size: 16px;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     max-width: 780px;
     margin: 0 auto;
     padding: 1.2em 1.2em 3em 1.2em;
+    /* 아이폰 노치/다이나믹 아일랜드 — 가로 safe area */
+    padding-left: max(1.2em, env(safe-area-inset-left));
+    padding-right: max(1.2em, env(safe-area-inset-right));
+    overflow-x: hidden;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   h1 {
     font-size: 2.2em;
@@ -49,8 +59,16 @@ window.__heeNotesPromise = new Promise(function(resolve){
   a, a:link, a:visited {
     color: #000;
     text-decoration: none;
+    -webkit-tap-highlight-color: rgba(180, 204, 197, 0.25);
   }
-  a:hover, a:active {
+  /* 포인터가 실제로 hover를 지원하는 환경(데스크톱 마우스)에서만 hover 색 적용 */
+  @media (hover: hover) {
+    a:hover {
+      color: #b4ccc5;
+      text-decoration: none;
+    }
+  }
+  a:active {
     color: #b4ccc5;
     text-decoration: none;
   }
@@ -201,6 +219,8 @@ window.__heeNotesPromise = new Promise(function(resolve){
     }
     body {
       padding: 1em 1em 2.5em 1em;
+      padding-left: max(1em, env(safe-area-inset-left));
+      padding-right: max(1em, env(safe-area-inset-right));
     }
     h1 {
       font-size: 1.9em;
@@ -210,6 +230,14 @@ window.__heeNotesPromise = new Promise(function(resolve){
     }
     .inline-nav {
       margin: 1em 0 0.6em 0;
+      line-height: 2.1;  /* 모바일에서 링크 탭 영역 확보 + 줄바꿈 시 여유 */
+    }
+    .inline-nav a {
+      padding: 0.15em 0.1em;  /* 탭 타겟 살짝 확장 */
+    }
+    .icon-links {
+      display: inline-block;  /* 좁은 화면에서 줄이 바뀌어도 아이콘 2개는 붙어있게 */
+      white-space: nowrap;
     }
     ul {
       padding-left: 1.3em;
@@ -232,6 +260,13 @@ window.__heeNotesPromise = new Promise(function(resolve){
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       max-width: 100%;
+    }
+  }
+
+  /* 아주 좁은 화면(iPhone SE 세로 등) — 1열로 전환 */
+  @media (max-width: 360px) {
+    .gallery {
+      grid-template-columns: 1fr;
     }
   }
 </style>
