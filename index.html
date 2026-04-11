@@ -547,6 +547,18 @@ window.__heeNotesPromise = new Promise(function(resolve){
         showPanel(null);
       });
     }
+
+    // 크로스 오리진 iframe(canvas-frame) 높이 자동 조정 — 이중 스크롤 방지
+    window.addEventListener('message', function(ev){
+      if (!ev.data || ev.data.type !== 'board52-height') return;
+      if (ev.origin !== 'https://heeth.dothome.co.kr') return;
+      var f = $('canvas-frame');
+      if (!f) return;
+      var h = parseInt(ev.data.height, 10);
+      if (!isNaN(h) && h > 0) {
+        f.style.height = (h + 20) + 'px';
+      }
+    });
   }
 
   function start(){
