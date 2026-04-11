@@ -549,16 +549,26 @@ window.__heeNotesPromise = new Promise(function(resolve){
     }
 
     // 크로스 오리진 iframe(canvas-frame) 높이 자동 조정 — 이중 스크롤 방지
-    window.addEventListener('message', function(ev){
-      if (!ev.data || ev.data.type !== 'board52-height') return;
-      if (ev.origin !== 'https://heeth.dothome.co.kr') return;
+    (function(){
       var f = $('canvas-frame');
       if (!f) return;
-      var h = parseInt(ev.data.height, 10);
-      if (!isNaN(h) && h > 0) {
-        f.style.height = (h + 20) + 'px';
-      }
-    });
+
+      // iframe 내부 페이지 전환(load) 시 이전 페이지의 큰 높이를 물려받지 않도록 기본값으로 리셋
+      f.addEventListener('load', function(){
+        try { f.style.height = '720px'; } catch(_){}
+      });
+
+      window.addEventListener('message', function(ev){
+        if (!ev.data || ev.data.type !== 'board52-height') return;
+        if (ev.origin !== 'https://heeth.dothome.co.kr') return;
+        var h = parseInt(ev.data.height, 10);
+        if (isNaN(h) || h <= 0) return;
+        var target = (h + 20) + 'px';
+        if (f.style.height !== target) {
+          f.style.height = target;
+        }
+      });
+    })();
   }
 
   function start(){
